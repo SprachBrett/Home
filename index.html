@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SprachBrett — Sprachen lernen</title>
+<meta name="description" content="Sprachen lernen im Duolingo-Stil: Lektionen, Streaks, Abzeichen und eine Online-Rangliste. Kostenlos im Browser." />
+<meta property="og:title" content="SprachBrett — Sprachen lernen" />
+<meta property="og:description" content="Sprachen lernen im Duolingo-Stil: Lektionen, Streaks, Abzeichen und eine Online-Rangliste." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://sprachbrett.github.io/Home/" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="SprachBrett — Sprachen lernen" />
+<meta name="twitter:description" content="Sprachen lernen im Duolingo-Stil: Lektionen, Streaks, Abzeichen und eine Online-Rangliste." />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=1786965190" />
+</head>
+<body>
+
+<!-- ============ AUTH SCREEN ============ -->
+<div id="auth-screen" class="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand">✦ SPRACHBRETT</div>
+    <div class="auth-sub">Melde dich an, um deinen Fortschritt und deinen Rangliste-Namen zu speichern.</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="auth-tab-login" type="button">Anmelden</button>
+      <button class="auth-tab" id="auth-tab-register" type="button">Registrieren</button>
+    </div>
+
+    <form id="auth-form-login" class="auth-form">
+      <div class="field">
+        <label>Benutzername</label>
+        <input class="text-field" type="text" id="login-username" autocomplete="username" placeholder="z. B. maria.stern" />
+      </div>
+      <div class="field">
+        <label>Passwort</label>
+        <input class="text-field" type="password" id="login-password" data-toggle autocomplete="current-password" placeholder="Passwort" />
+      </div>
+      <div class="auth-error" id="login-error"></div>
+      <button type="submit" class="btn btn-primary auth-submit" id="login-submit">Anmelden</button>
+      <button type="button" class="auth-link" id="auth-forgot-link">Passwort vergessen?</button>
+    </form>
+
+    <form id="auth-form-register" class="auth-form" hidden>
+      <div class="field">
+        <label>Benutzername <span class="field-hint">— wird so in der Rangliste angezeigt</span></label>
+        <input class="text-field" type="text" id="register-username" autocomplete="username" maxlength="20" placeholder="3–20 Zeichen" />
+        <div class="username-status" id="register-username-status"></div>
+      </div>
+      <div class="field">
+        <label>Passwort</label>
+        <input class="text-field" type="password" id="register-password" data-toggle autocomplete="new-password" placeholder="Mindestens 4 Zeichen" />
+      </div>
+      <div class="field">
+        <label>Passwort bestätigen</label>
+        <input class="text-field" type="password" id="register-password2" data-toggle autocomplete="new-password" placeholder="Passwort wiederholen" />
+      </div>
+      <div class="auth-error" id="register-error"></div>
+      <button type="submit" class="btn btn-primary auth-submit" id="register-submit">Konto erstellen</button>
+    </form>
+
+    <form id="auth-form-forgot" class="auth-form" hidden>
+      <div class="auth-sub" style="margin:0 0 4px;text-align:left;">
+        Gib deinen Benutzernamen und deinen Wiederherstellungscode ein (den du bei der Registrierung einmalig bekommen hast) sowie ein neues Passwort.
+      </div>
+      <div class="field">
+        <label>Benutzername</label>
+        <input class="text-field" type="text" id="forgot-username" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label>Wiederherstellungscode</label>
+        <input class="text-field" type="text" id="forgot-code" placeholder="XXXX-XXXX-XXXX" style="font-family:var(--font-mono);text-transform:uppercase;" />
+      </div>
+      <div class="field">
+        <label>Neues Passwort</label>
+        <input class="text-field" type="password" id="forgot-password" data-toggle autocomplete="new-password" placeholder="Mindestens 4 Zeichen" />
+      </div>
+      <div class="auth-error" id="forgot-error"></div>
+      <button type="submit" class="btn btn-primary auth-submit" id="forgot-submit">Passwort zurücksetzen</button>
+      <button type="button" class="auth-link" id="auth-back-to-login">Zurück zur Anmeldung</button>
+    </form>
+  </div>
+</div>
+
+<div class="app-shell" id="app-shell" hidden>
+
+  <!-- ============ TOPBAR ============ -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="brand">✦ SPRACHBRETT</span>
+      <span class="sep">|</span>
+      <span class="topbar-label">Ansicht:</span>
+      <span id="topbar-view" class="topbar-value">Übersicht</span>
+      <span class="sep">|</span>
+      <span class="topbar-label">Sprache:</span>
+      <span id="topbar-lang" class="topbar-value accent">Englisch 🇬🇧</span>
+    </div>
+    <div class="topbar-right">
+      <span class="stat-pill" title="Aktueller Streak">🔥 <span id="topbar-streak">0</span></span>
+      <span class="stat-pill" title="Herzen">❤️ <span id="topbar-hearts">5</span></span>
+      <span class="stat-pill" title="Gesamt-XP">⭐ <span id="topbar-xp">0</span></span>
+    </div>
+  </header>
+
+  <div class="main-layout">
+
+    <!-- ============ SIDEBAR (Werkzeuge-Stil) ============ -->
+    <aside class="sidebar">
+      <div class="sidebar-section-label">NAVIGATION</div>
+      <nav class="tool-grid" id="sidebar-nav">
+        <button class="tool-btn active" data-view="dashboard">
+          <span class="tool-icon">🏠</span><span class="tool-label">Übersicht</span>
+        </button>
+        <button class="tool-btn" data-view="lektionen">
+          <span class="tool-icon">📚</span><span class="tool-label">Lektionen</span>
+        </button>
+        <button class="tool-btn" data-view="wiederholen">
+          <span class="tool-icon">🔁</span><span class="tool-label">Wiederholen</span>
+        </button>
+        <button class="tool-btn" data-view="rangliste">
+          <span class="tool-icon">🏆</span><span class="tool-label">Rangliste</span>
+        </button>
+        <button class="tool-btn" data-view="abzeichen">
+          <span class="tool-icon">🎖️</span><span class="tool-label">Abzeichen</span>
+        </button>
+        <button class="tool-btn" data-view="profil">
+          <span class="tool-icon">👤</span><span class="tool-label">Profil</span>
+        </button>
+        <button class="tool-btn" data-view="einstellungen">
+          <span class="tool-icon">⚙️</span><span class="tool-label">Einstellungen</span>
+        </button>
+        <button class="tool-btn" data-view="admin" id="nav-admin" hidden>
+          <span class="tool-icon">🛡️</span><span class="tool-label">Admin</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-section-label">SPRACHE WÄHLEN</div>
+      <div class="lang-palette" id="lang-palette"><!-- injiziert von workspace.js --></div>
+
+      <div class="sidebar-section-label">AKTIONEN</div>
+      <div class="sidebar-actions" id="sidebar-actions">
+        <button class="action-btn" id="btn-export">📦 Fortschritt exportieren</button>
+        <button class="action-btn" id="btn-import">📂 Fortschritt importieren</button>
+        <input type="file" id="file-import" accept="application/json" hidden />
+        <button class="action-btn danger" id="btn-reset">🗑️ Zurücksetzen</button>
+      </div>
+    </aside>
+
+    <!-- ============ CANVAS / VIEW ROOT ============ -->
+    <main class="canvas-area">
+      <div id="view-root"><!-- injiziert von workspace.js --></div>
+    </main>
+
+  </div>
+
+  <!-- ============ STATUSBAR ============ -->
+  <footer class="statusbar">
+    <span>SPRACHE: <strong id="status-lang">Englisch</strong></span>
+    <span>STUFE: <strong id="status-level">1</strong></span>
+    <span>XP: <strong id="status-xp">0</strong></span>
+    <span>STREAK: <strong id="status-streak">0</strong> Tage</span>
+    <span>HERZEN: <strong id="status-hearts">5/5</strong></span>
+    <span class="statusbar-right" id="status-hint">Wähle eine Lektion, um zu starten</span>
+  </footer>
+
+</div>
+
+<!-- Toast-Container für Badge-/Level-Benachrichtigungen -->
+<div id="toast-root" class="toast-root"></div>
+
+<script type="module" src="app.js?v=1786965190"></script>
+</body>
+</html>

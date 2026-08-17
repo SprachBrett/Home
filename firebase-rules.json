@@ -1,0 +1,31 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "leaderboard": {
+      ".read": "auth != null",
+
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.hasChildren(['name', 'xp'])",
+
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 24"
+        },
+
+        "xp": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 999999 && (!data.exists() || newData.val() >= data.val()) && (!data.exists() || (newData.val() - data.val()) <= 40)"
+        },
+
+        "updatedAt": {
+          ".validate": true
+        },
+
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

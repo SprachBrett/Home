@@ -4,17 +4,36 @@
 // Werkzeugleiste/Navigation und verdrahtet globale Aktionen.
 // ============================================================
 
-import { loadUser, saveUser } from "./storage.js?v=1787038118";
-import { checkStreakOnLoad, regenerateHearts } from "./streak.js?v=1787038118";
-import { initWorkspace } from "./workspace.js?v=1787038118";
-import { initSidebarActions } from "./profile.js?v=1787038118";
-import { initAuthScreen } from "./auth-ui.js?v=1787038118";
+import { loadUser, saveUser, setActiveUser, hasLocalProgress, loadLegacyGlobalUser, hydrateFromRemote } from "./storage.js?v=1787038676";
+import { checkStreakOnLoad, regenerateHearts } from "./streak.js?v=1787038676";
+import { initWorkspace } from "./workspace.js?v=1787038676";
+import { initSidebarActions } from "./profile.js?v=1787038676";
+import { initAuthScreen } from "./auth-ui.js?v=1787038676";
 
 document.addEventListener("DOMContentLoaded", () => {
   initAuthScreen((player) => {
-    // Login/Registrierung erfolgreich -> App starten und den
-    // verifizierten, eindeutigen Kontonamen als Rangliste-Namen setzen.
-    let user = loadUser();
+    // Login/Registrierung erfolgreich -> ab jetzt läuft aller
+    // Fortschritt unter einem account-eigenen localStorage-Schlüssel,
+    // nicht mehr unter einem einzigen, kontounabhängigen Schlüssel
+    // (das war der Grund für "fremder Fortschritt beim Kontowechsel").
+    setActiveUser(player.username.trim().toLowerCase());
+
+    let user;
+    if (player.progress) {
+      // Am Account gespeicherter Fortschritt vorhanden (z.B. von einem
+      // anderen Gerät) -> das ist die verbindliche Quelle.
+      user = hydrateFromRemote(player.progress);
+    } else if (!hasLocalProgress()) {
+      // Kein Account-Fortschritt UND lokal unter dem neuen,
+      // kontogebundenen Schlüssel noch nichts vorhanden -> einmalig
+      // den alten, account-unabhängigen Stand übernehmen (Migration
+      // für Konten von vor dieser Änderung), sonst ganz frisch starten.
+      const legacy = loadLegacyGlobalUser();
+      user = legacy ? hydrateFromRemote(legacy) : loadUser();
+    } else {
+      user = loadUser();
+    }
+
     user.name = player.username;
     user.isAdmin = player.is_admin === true || player.is_admin === "true";
     user = checkStreakOnLoad(user);

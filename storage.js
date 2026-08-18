@@ -17,9 +17,31 @@
 // es nur mit serverseitiger Prüfung (siehe online-rangliste.js).
 // ============================================================
 
-const KEY = "sprachbrett_user";
+const KEY_PREFIX = "sprachbrett_user";
+const LEGACY_KEY = "sprachbrett_user"; // Stand vor Einführung des Account-Systems
 const RANG_KEY = "sprachbrett_rangliste";
 const SIG_SALT = "sprachbrett-integrity-v1-8f3d21";
+
+// Welcher localStorage-Schlüssel gerade aktiv ist, hängt vom
+// eingeloggten Konto ab (setActiveUser wird beim Login aufgerufen).
+// Ohne aktives Konto (sollte praktisch nicht vorkommen, da die App
+// erst nach Login startet) wird der alte, globale Schlüssel benutzt.
+let activeUsernameLower = null;
+
+// ← FIX: Vorher gab es NUR einen einzigen, account-unabhängigen
+// localStorage-Schlüssel — meldete man sich im selben Browser mit
+// einem anderen Konto an, sah man XP/Streak/Herzen des vorherigen
+// Kontos. Jetzt bekommt jedes Konto seinen eigenen Schlüssel, UND
+// der Fortschritt wird zusätzlich am Account in Supabase gespeichert
+// (siehe online-rangliste.js), damit er auch geräteübergreifend
+// mitkommt.
+export function setActiveUser(usernameLower) {
+  activeUsernameLower = usernameLower || null;
+}
+
+function storageKey() {
+  return activeUsernameLower ? `${KEY_PREFIX}:${activeUsernameLower}` : LEGACY_KEY;
+}
 
 const DEFAULT_USER = {
   name: "Lerner",
@@ -84,7 +106,7 @@ function mergeWithDefaults(data) {
 
 export function loadUser() {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(storageKey());
     if (!raw) {
       const fresh = structuredClone(DEFAULT_USER);
       saveUser(fresh);
@@ -109,15 +131,54 @@ export function loadUser() {
 export function saveUser(user) {
   try {
     user._sig = computeSig(user);
-    localStorage.setItem(KEY, JSON.stringify(user));
+    localStorage.setItem(storageKey(), JSON.stringify(user));
   } catch (e) {
     console.error("Fehler beim Speichern des Nutzerstands:", e);
   }
 }
 
 export function resetUser() {
-  localStorage.removeItem(KEY);
+  localStorage.removeItem(storageKey());
   return loadUser();
+}
+
+// ---- Account-Anbindung (siehe app.js) ----
+
+// Gibt es unter dem aktuell aktiven Konto bereits lokal gespeicherten
+// Fortschritt? (Für die Einmal-Migration von Alt-Konten relevant.)
+export function hasLocalProgress() {
+  return !!localStorage.getItem(storageKey());
+}
+
+// Liest den alten, account-unabhängigen Stand (vor Einführung des
+// Account-Systems) — nur für eine einmalige Übernahme in den neuen,
+// kontogebundenen Speicher.
+export function loadLegacyGlobalUser() {
+  try {
+    const raw = localStorage.getItem(LEGACY_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Übernimmt einen vom Server (Supabase-Account) oder aus dem
+// Alt-Speicher geladenen Fortschritt in den aktuell aktiven,
+// kontogebundenen Speicher und berechnet eine frische, gültige
+// Prüfsumme (die alte _sig aus einer fremden Quelle wäre ungültig).
+export function hydrateFromRemote(remoteProgress) {
+  const merged = mergeWithDefaults(remoteProgress || {});
+  delete merged._sig;
+  saveUser(merged);
+  return merged;
+}
+
+// Für die Synchronisierung mit dem Account: der gesamte Fortschritt
+// ohne die lokale Prüfsumme (die wird beim nächsten Laden neu
+// berechnet, eine fremde _sig hätte dort keine Aussagekraft).
+export function getSyncableProgress(user) {
+  const { _sig, ...rest } = user;
+  return rest;
 }
 
 export function exportUser() {

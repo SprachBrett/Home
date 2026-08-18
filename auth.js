@@ -150,7 +150,7 @@ export async function registerPlayer(username, password) {
   const recoveryCode = generateRecoveryCode();
   const recoveryHash = await hashPassword(recoveryCode);
   try {
-    const rows = await sb('sprachbrett_players?select=id,username,is_admin,banned,created_at', {
+    const rows = await sb('sprachbrett_players?select=id,username,is_admin,banned,created_at,progress', {
       method: 'POST',
       body: JSON.stringify({
         username: name, username_lower: name.toLowerCase(),
@@ -187,7 +187,7 @@ export async function loginPlayer(username, password) {
 
 // ---- Stiller Re-Check bei bestehender Session (z.B. Bann seit letztem Besuch) ----
 export async function refreshPlayer(username) {
-  const rows = await sb(`sprachbrett_players?username_lower=eq.${encodeURIComponent(username.trim().toLowerCase())}&select=id,username,banned,is_admin`);
+  const rows = await sb(`sprachbrett_players?username_lower=eq.${encodeURIComponent(username.trim().toLowerCase())}&select=id,username,banned,is_admin,progress`);
   if (!rows.length) throw new Error("Dieses Konto existiert nicht mehr.");
   if (isBanned(rows[0].banned)) throw new Error("Dieses Konto wurde gesperrt.");
   return rows[0];

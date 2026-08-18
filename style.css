@@ -820,11 +820,3 @@ input[type="range"]::-webkit-slider-thumb {
   user-select: all;
 }
 
-/* ---- Rangliste: Trennzeile vor der eigenen Position (falls außerhalb Top 20) ---- */
-.rang-divider {
-  text-align: center;
-  color: var(--text-dimmer);
-  letter-spacing: 4px;
-  padding: 2px 0;
-  font-size: 13px;
-}

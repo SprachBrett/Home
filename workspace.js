@@ -5,16 +5,16 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787037339";
-import { saveUser, loadUser } from "./storage.js?v=1787037339";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787037339";
-import { evaluateBadges, BADGES } from "./badges.js?v=1787037339";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787037339";
-import { getRangliste, getLeague } from "./rangliste.js?v=1787037339";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787037339";
-import { showToast } from "./toast.js?v=1787037339";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1787037339";
-import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787037339";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787038118";
+import { saveUser, loadUser } from "./storage.js?v=1787038118";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787038118";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787038118";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787038118";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787038118";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787038118";
+import { showToast } from "./toast.js?v=1787038118";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787038118";
+import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787038118";
 
 let user = null;
 let currentView = "dashboard";
@@ -552,25 +552,22 @@ async function renderRangliste() {
   }, currentUser.name);
 }
 
-// ← FIX: Der eigene Eintrag in der Online-Rangliste zeigt sonst 0 XP (oder
-// fehlt ganz), solange der letzte Sync noch nicht durchgelaufen oder
-// blockiert ist (z.B. wegen everTampered, fehlgeschlagener Regel-Prüfung
-// oder Netzwerk-Timing). Der lokale XP-Stand ist immer die Wahrheit für
-// die eigene Zeile — die Werte anderer Nutzer bleiben unangetastet.
+// ← FIX: Der eigene Eintrag in der Online-Rangliste zeigt sonst kurz 0 XP,
+// solange der letzte Sync noch nicht durchgelaufen oder blockiert ist
+// (z.B. wegen everTampered, fehlgeschlagener Regel-Prüfung oder
+// Netzwerk-Timing). Der lokale XP-Stand überschreibt nur die Anzeige der
+// eigenen Zeile — Rang/Reihenfolge kommen unverändert vom Server, da
+// online-rangliste.js bei Bedarf schon eine eigene, korrekt einsortierte
+// Zeile (inkl. Trennzeile bei Platz > 20) mitliefert.
 function reconcileOwnEntry(entries, currentUser) {
-  const fixed = entries.map((e) =>
+  return entries.map((e) =>
     e.isUser ? { ...e, name: currentUser.name || "Du", xp: currentUser.xp } : e
   );
-  if (!fixed.some((e) => e.isUser)) {
-    fixed.push({ name: currentUser.name || "Du", xp: currentUser.xp, isUser: true });
-  }
-  fixed.sort((a, b) => b.xp - a.xp);
-  fixed.forEach((e, i) => (e.rank = i + 1));
-  return fixed;
 }
 
 function paintRangliste(entries, isOnline) {
-  const league = getLeague((entries.find((e) => e.isUser) || user).xp);
+  const ownEntry = entries.find((e) => e.isUser);
+  const league = getLeague(ownEntry ? ownEntry.xp : user.xp);
 
   root().innerHTML = `
     <div class="view-header">
@@ -578,7 +575,7 @@ function paintRangliste(entries, isOnline) {
         <div class="view-title">Rangliste</div>
         <div class="view-subtitle">
           ${isOnline
-            ? "🟢 Online — echte, live aktualisierte Rangliste aller SprachBrett-Nutzer."
+            ? "🟢 Online — Top 20 aller SprachBrett-Nutzer, live aktualisiert."
             : "🟡 Lokal — simulierte Liga auf diesem Gerät."}
         </div>
       </div>
@@ -595,9 +592,11 @@ function paintRangliste(entries, isOnline) {
     ` : ""}
     <div class="league-badge">🏆 ${league}-Liga</div>
     <div class="rang-list">
-      ${entries.map((e) => `
+      ${entries.map((e) => e.divider ? `
+        <div class="rang-divider">⋯</div>
+      ` : `
         <div class="rang-row ${e.isUser ? "me" : ""}">
-          <div class="rang-rank">${e.rank}</div>
+          <div class="rang-rank">${e.rank ?? "–"}</div>
           <div class="rang-name">${e.isUser ? "👉 " : ""}${e.name}</div>
           <div class="rang-xp">${e.xp} XP</div>
         </div>

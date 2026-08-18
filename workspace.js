@@ -5,21 +5,21 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1786965190";
-import { saveUser, loadUser } from "./storage.js?v=1786965190";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1786965190";
-import { evaluateBadges, BADGES } from "./badges.js?v=1786965190";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1786965190";
-import { getRangliste, getLeague } from "./rangliste.js?v=1786965190";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, FIREBASE_ENABLED } from "./online-rangliste.js?v=1786965190";
-import { showToast } from "./toast.js?v=1786965190";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1786965190";
-import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1786965190";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787037339";
+import { saveUser, loadUser } from "./storage.js?v=1787037339";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787037339";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787037339";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787037339";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787037339";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787037339";
+import { showToast } from "./toast.js?v=1787037339";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787037339";
+import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787037339";
 
 let user = null;
 let currentView = "dashboard";
 let session = null; // aktive Übungssitzung
-let unsubLeaderboard = null; // aktives Firebase-Live-Abonnement, falls vorhanden
+let unsubLeaderboard = null; // aktives Rangliste-Live-Abonnement (Polling), falls vorhanden
 const root = () => document.getElementById("view-root");
 
 export function initWorkspace(loadedUser) {
@@ -549,7 +549,7 @@ async function renderRangliste() {
     if (currentView !== "rangliste") return; // Ansicht inzwischen gewechselt
     if (entries === null) { paintRangliste(getRangliste(currentUser), false); return; }
     paintRangliste(reconcileOwnEntry(entries, currentUser), true);
-  });
+  }, currentUser.name);
 }
 
 // ← FIX: Der eigene Eintrag in der Online-Rangliste zeigt sonst 0 XP (oder
@@ -583,11 +583,9 @@ function paintRangliste(entries, isOnline) {
         </div>
       </div>
     </div>
-    ${!isOnline && !FIREBASE_ENABLED ? `
+    ${!isOnline && !ONLINE_LEADERBOARD_ENABLED ? `
       <div class="panel" style="margin-bottom:18px;">
-        Die echte Online-Rangliste ist noch nicht eingerichtet. Trag deine Firebase-Zugangsdaten in
-        <code>js/firebase-config.js</code> ein und setze <code>FIREBASE_ENABLED</code> auf <code>true</code>,
-        um dich mit anderen Nutzern zu messen. Bis dahin siehst du hier eine lokale Simulation.
+        Die echte Online-Rangliste ist gerade nicht erreichbar. Bis dahin siehst du hier eine lokale Simulation.
       </div>
     ` : ""}
     ${user.everTampered ? `

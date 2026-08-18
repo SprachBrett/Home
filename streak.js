@@ -2,7 +2,7 @@
 // streak.js — Streak- und Tagesziel-Logik
 // ============================================================
 
-import { todayISO } from "./storage.js?v=1786965190";
+import { todayISO } from "./storage.js?v=1787037339";
 
 function daysBetween(isoA, isoB) {
   const a = new Date(isoA + "T00:00:00");

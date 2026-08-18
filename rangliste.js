@@ -9,7 +9,7 @@
 // wird korrekt nach seinem echten XP-Stand einsortiert.
 // ============================================================
 
-import { loadRangliste, saveRangliste } from "./storage.js?v=1786965190";
+import { loadRangliste, saveRangliste } from "./storage.js?v=1787037339";
 
 const BOT_NAMES = [
   "Lena.exe", "Max_Speed", "Nova", "Kilian_B", "Pixel_Wolf", "Sara_K",

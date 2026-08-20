@@ -6,7 +6,7 @@
 // (Wort eintippen), listen (Hören & erkennen via Sprachausgabe).
 // ============================================================
 
-import { LANGUAGES, SPEECH_LOCALE } from "./data.js?v=1787210758";
+import { LANGUAGES, SPEECH_LOCALE } from "./data.js?v=1787211352";
 
 function shuffle(arr) {
   const a = [...arr];

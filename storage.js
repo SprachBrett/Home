@@ -162,6 +162,13 @@ export function loadLegacyGlobalUser() {
   }
 }
 
+// Löscht den alten, account-unabhängigen Stand nach einer erfolgten
+// Migration — verhindert, dass sich derselbe Alt-Stand auf jedes
+// weitere, neu registrierte Konto im selben Browser überträgt.
+export function clearLegacyGlobalUser() {
+  localStorage.removeItem(LEGACY_KEY);
+}
+
 // Übernimmt einen vom Server (Supabase-Account) oder aus dem
 // Alt-Speicher geladenen Fortschritt in den aktuell aktiven,
 // kontogebundenen Speicher und berechnet eine frische, gültige

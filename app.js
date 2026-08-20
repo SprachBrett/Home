@@ -4,11 +4,11 @@
 // Werkzeugleiste/Navigation und verdrahtet globale Aktionen.
 // ============================================================
 
-import { loadUser, saveUser, setActiveUser, hasLocalProgress, loadLegacyGlobalUser, hydrateFromRemote } from "./storage.js?v=1787210758";
-import { checkStreakOnLoad, regenerateHearts } from "./streak.js?v=1787210758";
-import { initWorkspace } from "./workspace.js?v=1787210758";
-import { initSidebarActions } from "./profile.js?v=1787210758";
-import { initAuthScreen } from "./auth-ui.js?v=1787210758";
+import { loadUser, saveUser, setActiveUser, hasLocalProgress, loadLegacyGlobalUser, clearLegacyGlobalUser, hydrateFromRemote } from "./storage.js?v=1787211352";
+import { checkStreakOnLoad, regenerateHearts } from "./streak.js?v=1787211352";
+import { initWorkspace } from "./workspace.js?v=1787211352";
+import { initSidebarActions } from "./profile.js?v=1787211352";
+import { initAuthScreen } from "./auth-ui.js?v=1787211352";
 
 document.addEventListener("DOMContentLoaded", () => {
   initAuthScreen((player) => {
@@ -28,8 +28,16 @@ document.addEventListener("DOMContentLoaded", () => {
       // kontogebundenen Schlüssel noch nichts vorhanden -> einmalig
       // den alten, account-unabhängigen Stand übernehmen (Migration
       // für Konten von vor dieser Änderung), sonst ganz frisch starten.
+      // ← FIX: Der alte Speicher wird danach GELÖSCHT, sonst würde
+      // sich derselbe Alt-Stand auf jedes weitere, neu registrierte
+      // Konto im selben Browser "vererben".
       const legacy = loadLegacyGlobalUser();
-      user = legacy ? hydrateFromRemote(legacy) : loadUser();
+      if (legacy) {
+        user = hydrateFromRemote(legacy);
+        clearLegacyGlobalUser();
+      } else {
+        user = loadUser();
+      }
     } else {
       user = loadUser();
     }

@@ -4,13 +4,13 @@
 // im Zeichenprogramm-Vorbild)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons } from "./data.js?v=1787210758";
-import { exportUser, importUserFromFile, resetUser, saveUser } from "./storage.js?v=1787210758";
-import { levelFromXp } from "./streak.js?v=1787210758";
-import { BADGES } from "./badges.js?v=1787210758";
-import { showToast } from "./toast.js?v=1787210758";
-import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787210758";
-import { wirePasswordToggles } from "./auth-ui.js?v=1787210758";
+import { LANGUAGES, getFlatLessons } from "./data.js?v=1787211352";
+import { exportUser, importUserFromFile, resetUser, saveUser } from "./storage.js?v=1787211352";
+import { levelFromXp } from "./streak.js?v=1787211352";
+import { BADGES } from "./badges.js?v=1787211352";
+import { showToast } from "./toast.js?v=1787211352";
+import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787211352";
+import { wirePasswordToggles } from "./auth-ui.js?v=1787211352";
 
 export function renderProfil(root, user, persist) {
   const { level, xpIntoLevel, xpForNextLevel } = levelFromXp(user.xp);

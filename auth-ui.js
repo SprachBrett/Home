@@ -13,7 +13,7 @@ import {
   refreshPlayer,
   validateUsername,
   resetPasswordWithRecoveryCode
-} from "./auth.js?v=1787210758";
+} from "./auth.js?v=1787211352";
 
 let debounceTimer = null;
 

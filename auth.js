@@ -253,15 +253,19 @@ export async function listPlayers() {
 }
 
 // ---- Admin: Nutzer sperren/entsperren ----
-// Serverseitig ist per Spaltenrecht nur "banned" überhaupt änderbar
-// (siehe supabase-schema-admin.sql) — is_admin/password_hash lassen
-// sich über diesen Weg nicht anfassen.
-export async function setBanned(id, banned) {
-  await sb(`sprachbrett_players?id=eq.${encodeURIComponent(id)}`, {
-    method: "PATCH",
-    body: JSON.stringify({ banned }),
-    prefer: "return=minimal"
+// Läuft über eine admin-geprüfte Funktion (wie Passwort-Reset und
+// Löschen) statt über eine offene Spalte — vorher hätte theoretisch
+// jeder, der den anon-Key kennt (er steht im Frontend-Code), auch
+// ohne Admin-Konto eine Sperrung auslösen können.
+export async function adminSetBanned(adminUsername, adminPassword, targetId, banned) {
+  const adminLower = adminUsername.trim().toLowerCase();
+  const adminHash = await hashPassword(adminPassword);
+  const ok = await rpc('admin_set_banned', {
+    p_admin_username_lower: adminLower, p_admin_hash: adminHash,
+    p_target_id: targetId, p_banned: banned
   });
+  if (!ok) throw new Error("Nicht autorisiert — Admin-Passwort falsch?");
+  return true;
 }
 
 // ---- Admin: Passwort eines Nutzers zurücksetzen ----

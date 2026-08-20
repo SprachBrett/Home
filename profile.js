@@ -4,13 +4,13 @@
 // im Zeichenprogramm-Vorbild)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons } from "./data.js?v=1787211352";
-import { exportUser, importUserFromFile, resetUser, saveUser } from "./storage.js?v=1787211352";
-import { levelFromXp } from "./streak.js?v=1787211352";
-import { BADGES } from "./badges.js?v=1787211352";
-import { showToast } from "./toast.js?v=1787211352";
-import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787211352";
-import { wirePasswordToggles } from "./auth-ui.js?v=1787211352";
+import { LANGUAGES, getFlatLessons } from "./data.js?v=1787211723";
+import { exportUser, importUserFromFile, saveUser } from "./storage.js?v=1787211723";
+import { levelFromXp } from "./streak.js?v=1787211723";
+import { BADGES } from "./badges.js?v=1787211723";
+import { showToast } from "./toast.js?v=1787211723";
+import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787211723";
+import { wirePasswordToggles } from "./auth-ui.js?v=1787211723";
 
 export function renderProfil(root, user, persist) {
   const { level, xpIntoLevel, xpForNextLevel } = levelFromXp(user.xp);
@@ -216,7 +216,6 @@ export function renderEinstellungen(root, user, persist) {
       <div style="display:flex;flex-direction:column;gap:8px;">
         <button class="btn" id="set-export">📦 Fortschritt exportieren</button>
         <button class="btn" id="set-import">📂 Fortschritt importieren</button>
-        <button class="btn" style="border-color:var(--danger);color:#fca5a5;" id="set-reset">🗑️ Fortschritt zurücksetzen</button>
       </div>
     </div>
   `;
@@ -246,15 +245,6 @@ export function renderEinstellungen(root, user, persist) {
 
   document.getElementById("set-export").addEventListener("click", () => exportUser());
   document.getElementById("set-import").addEventListener("click", () => document.getElementById("file-import").click());
-  document.getElementById("set-reset").addEventListener("click", () => {
-    if (confirm("Wirklich deinen gesamten Lernfortschritt löschen? Das kann nicht rückgängig gemacht werden.")) {
-      const fresh = resetUser();
-      Object.assign(user, fresh);
-      persist();
-      showToast("Fortschritt wurde zurückgesetzt");
-      renderEinstellungen(root, user, persist);
-    }
-  });
 }
 
 // Verdrahtet die immer sichtbaren Sidebar-Aktionen (unabhängig von der aktuellen Ansicht)
@@ -276,13 +266,6 @@ export function initSidebarActions(user, onChange) {
     e.target.value = "";
   });
 
-  document.getElementById("btn-reset").addEventListener("click", () => {
-    if (confirm("Wirklich deinen gesamten Lernfortschritt löschen? Das kann nicht rückgängig gemacht werden.")) {
-      resetUser();
-      showToast("Fortschritt wurde zurückgesetzt");
-      setTimeout(onChange, 500);
-    }
-  });
 }
 
 function escapeAttr(str) {

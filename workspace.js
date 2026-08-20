@@ -5,16 +5,16 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787211352";
-import { saveUser, loadUser } from "./storage.js?v=1787211352";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787211352";
-import { evaluateBadges, BADGES } from "./badges.js?v=1787211352";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787211352";
-import { getRangliste, getLeague } from "./rangliste.js?v=1787211352";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787211352";
-import { showToast } from "./toast.js?v=1787211352";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1787211352";
-import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787211352";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787211723";
+import { saveUser, loadUser } from "./storage.js?v=1787211723";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787211723";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787211723";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787211723";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787211723";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787211723";
+import { showToast } from "./toast.js?v=1787211723";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787211723";
+import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787211723";
 
 let user = null;
 let currentView = "dashboard";
@@ -598,7 +598,7 @@ function paintRangliste(entries, isOnline) {
       ${entries.map((e) => `
         <div class="rang-row ${e.isUser ? "me" : ""}">
           <div class="rang-rank">${e.rank}</div>
-          <div class="rang-name">${e.isUser ? "👉 " : ""}${e.name}</div>
+          <div class="rang-name">${e.isUser ? "👉 " : ""}${escapeHtml(e.name)}</div>
           <div class="rang-xp">${e.xp} XP</div>
         </div>
       `).join("")}
@@ -700,10 +700,12 @@ function paintAdmin(players) {
         if (wantBan && !confirm(`„${username}" wirklich sperren? Das Konto kann sich danach nicht mehr anmelden.`)) return;
         btn.disabled = true;
         try {
-          await setBanned(id, wantBan);
+          const adminPw = await askAdminPassword();
+          await adminSetBanned(user.name, adminPw, id, wantBan);
           showToast(wantBan ? `„${username}" wurde gesperrt.` : `„${username}" wurde entsperrt.`);
           renderAdmin();
         } catch (e) {
+          adminPasswordCache = null; // falsches Passwort -> nicht weiter cachen
           showToast("Fehler: " + e.message, true);
           btn.disabled = false;
         }

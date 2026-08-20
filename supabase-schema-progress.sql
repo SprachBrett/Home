@@ -19,7 +19,11 @@ grant update (progress) on sprachbrett_players to anon;
 -- Login-Funktion um den gespeicherten Fortschritt erweitern, damit
 -- er direkt beim Anmelden mitgeliefert wird (kein zweiter Request
 -- nötig, und der Passwort-Hash bleibt weiterhin unsichtbar).
-create or replace function verify_login(p_username_lower text, p_hash text)
+-- Rückgabetyp ändert sich (neue Spalte) -> muss erst gelöscht werden,
+-- "create or replace" reicht dafür bei Postgres nicht aus.
+drop function if exists verify_login(text, text);
+
+create function verify_login(p_username_lower text, p_hash text)
 returns table(id uuid, username text, is_admin boolean, banned boolean, progress jsonb)
 language plpgsql
 security definer

@@ -17,6 +17,9 @@ begin
   if new.xp = 0 then
     return new; -- vollständiger Reset ist immer erlaubt
   end if;
+  if old.xp = 0 then
+    return new; -- allererster Sync (Konto war noch nie online) -> uneingeschränkt erlaubt
+  end if;
   if new.xp < old.xp then
     raise exception 'XP kann nicht sinken';
   end if;

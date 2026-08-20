@@ -21,8 +21,8 @@
 // Hobby-Rangliste.
 // ============================================================
 
-import { isConfigured } from "./auth.js?v=1787038676";
-import { getSyncableProgress } from "./storage.js?v=1787038676";
+import { isConfigured } from "./auth.js?v=1787210758";
+import { getSyncableProgress } from "./storage.js?v=1787210758";
 
 const SUPABASE_URL = 'https://vxxgzstcyfbtalgyspia.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_IQG5cqOPBc8kslXPXpqNIA_HnurwsNe';
@@ -53,8 +53,8 @@ export async function isOnlineAvailable() {
   return isConfigured();
 }
 
-// Schreibt den eigenen Punktestand UND den vollständigen lokalen
-// Fortschritt (Lektionen, Abzeichen, Streak, Herzen …) in den
+// Schreibt XP, Herzen, Streak (jeweils als eigene Spalte) UND den
+// vollständigen lokalen Fortschritt (Lektionen, Abzeichen …) in den
 // Account — damit der Fortschritt am Konto hängt und nicht nur im
 // Browser. So zeigt ein anderer Account im selben Browser nie
 // fremde Werte an, und der Fortschritt ist geräteübergreifend.
@@ -74,7 +74,7 @@ export async function syncScoreOnline(user) {
     const progress = getSyncableProgress(user);
     await sb(`sprachbrett_players?username_lower=eq.${encodeURIComponent(user.name.trim().toLowerCase())}`, {
       method: "PATCH",
-      body: JSON.stringify({ xp: user.xp, progress }),
+      body: JSON.stringify({ xp: user.xp, hearts: user.hearts, streak: user.streak, progress }),
       prefer: "return=minimal"
     });
     return true;

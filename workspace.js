@@ -5,16 +5,16 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787038676";
-import { saveUser, loadUser } from "./storage.js?v=1787038676";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787038676";
-import { evaluateBadges, BADGES } from "./badges.js?v=1787038676";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787038676";
-import { getRangliste, getLeague } from "./rangliste.js?v=1787038676";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787038676";
-import { showToast } from "./toast.js?v=1787038676";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1787038676";
-import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787038676";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787210758";
+import { saveUser, loadUser } from "./storage.js?v=1787210758";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787210758";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787210758";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787210758";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787210758";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787210758";
+import { showToast } from "./toast.js?v=1787210758";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787210758";
+import { listPlayers, setBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787210758";
 
 let user = null;
 let currentView = "dashboard";

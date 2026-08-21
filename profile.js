@@ -4,13 +4,14 @@
 // im Zeichenprogramm-Vorbild)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons } from "./data.js?v=1787211723";
-import { exportUser, importUserFromFile, saveUser } from "./storage.js?v=1787211723";
-import { levelFromXp } from "./streak.js?v=1787211723";
-import { BADGES } from "./badges.js?v=1787211723";
-import { showToast } from "./toast.js?v=1787211723";
-import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787211723";
-import { wirePasswordToggles } from "./auth-ui.js?v=1787211723";
+import { LANGUAGES, getFlatLessons } from "./data.js?v=1787296657";
+import { exportUser, importUserFromFile, saveUser } from "./storage.js?v=1787296657";
+import { levelFromXp } from "./streak.js?v=1787296657";
+import { BADGES } from "./badges.js?v=1787296657";
+import { showToast } from "./toast.js?v=1787296657";
+import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787296657";
+import { wirePasswordToggles } from "./auth-ui.js?v=1787296657";
+import { confirmModal } from "./modal.js?v=1787296657";
 
 export function renderProfil(root, user, persist) {
   const { level, xpIntoLevel, xpForNextLevel } = levelFromXp(user.xp);
@@ -122,8 +123,8 @@ export function renderProfil(root, user, persist) {
     </div>
   `;
 
-  document.getElementById("profile-logout").addEventListener("click", () => {
-    if (!confirm("Wirklich abmelden? Dein Fortschritt bleibt auf diesem Konto gespeichert.")) return;
+  document.getElementById("profile-logout").addEventListener("click", async () => {
+    if (!(await confirmModal("Wirklich abmelden? Dein Fortschritt bleibt auf diesem Konto gespeichert.", { title: "Abmelden", okLabel: "Abmelden" }))) return;
     clearSession();
     window.location.reload();
   });
@@ -173,7 +174,7 @@ export function renderProfil(root, user, persist) {
     const errorBox = document.getElementById("delete-account-error");
     errorBox.textContent = "";
     if (!password) { errorBox.textContent = "Bitte Passwort eingeben."; return; }
-    if (!confirm(`Konto „${user.name}" wirklich unwiderruflich löschen?`)) return;
+    if (!(await confirmModal(`Konto „${user.name}" wirklich unwiderruflich löschen?`, { title: "Konto löschen", okLabel: "Löschen", danger: true }))) return;
     try {
       await deleteOwnAccount(user.name, password);
       clearSession();

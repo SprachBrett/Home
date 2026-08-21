@@ -5,16 +5,17 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787211723";
-import { saveUser, loadUser } from "./storage.js?v=1787211723";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787211723";
-import { evaluateBadges, BADGES } from "./badges.js?v=1787211723";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787211723";
-import { getRangliste, getLeague } from "./rangliste.js?v=1787211723";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787211723";
-import { showToast } from "./toast.js?v=1787211723";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1787211723";
-import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787211723";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787296657";
+import { saveUser, loadUser } from "./storage.js?v=1787296657";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787296657";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787296657";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787296657";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787296657";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787296657";
+import { showToast } from "./toast.js?v=1787296657";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787296657";
+import { openModal, showInfoModal, confirmModal } from "./modal.js?v=1787296657";
+import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787296657";
 
 let user = null;
 let currentView = "dashboard";
@@ -618,10 +619,26 @@ let adminPasswordCache = null;
 
 async function askAdminPassword() {
   if (adminPasswordCache) return adminPasswordCache;
-  const pw = prompt(`Zur Bestätigung: Passwort von „${user.name}" eingeben`);
+  const overlay = await openModal({
+    title: "Admin-Bestätigung",
+    bodyHtml: `
+      <div class="view-subtitle" style="margin-bottom:10px;">Passwort von „${escapeHtml(user.name)}" zur Bestätigung eingeben.</div>
+      <input class="text-field" type="password" data-toggle id="modal-admin-pw" autocomplete="current-password" />
+    `,
+    buttons: [
+      { id: "cancel", label: "Abbrechen", cancel: true },
+      { id: "ok", label: "Bestätigen", primary: true }
+    ]
+  });
+  if (!overlay) throw new Error("Abgebrochen.");
+  const pw = overlay.querySelector("#modal-admin-pw").value;
   if (!pw) throw new Error("Abgebrochen.");
   adminPasswordCache = pw;
   return pw;
+}
+
+function showInfoModal(title, bodyHtml) {
+  return openModal({ title, bodyHtml, buttons: [{ id: "ok", label: "OK", primary: true }] });
 }
 
 async function renderAdmin() {
@@ -697,7 +714,7 @@ function paintAdmin(players) {
 
       if (action === "ban" || action === "unban") {
         const wantBan = action === "ban";
-        if (wantBan && !confirm(`„${username}" wirklich sperren? Das Konto kann sich danach nicht mehr anmelden.`)) return;
+        if (wantBan && !(await confirmModal(`„${username}" wirklich sperren? Das Konto kann sich danach nicht mehr anmelden.`, { title: "Nutzer sperren", okLabel: "Sperren", danger: true }))) return;
         btn.disabled = true;
         try {
           const adminPw = await askAdminPassword();
@@ -713,12 +730,15 @@ function paintAdmin(players) {
       }
 
       if (action === "reset") {
-        if (!confirm(`Neues, zufälliges Passwort für „${username}" erzeugen? Das alte Passwort wird ungültig.`)) return;
+        if (!(await confirmModal(`Neues, zufälliges Passwort für „${username}" erzeugen? Das alte Passwort wird ungültig.`, { title: "Passwort zurücksetzen", okLabel: "Zurücksetzen" }))) return;
         btn.disabled = true;
         try {
           const adminPw = await askAdminPassword();
           const tempPassword = await adminResetPassword(user.name, adminPw, id);
-          alert(`Neues Passwort für „${username}":\n\n${tempPassword}\n\nBitte sicher weitergeben — es wird nirgends gespeichert und kann danach nicht erneut angezeigt werden.`);
+          await showInfoModal("Neues Passwort erzeugt", `
+            <div class="view-subtitle" style="margin-bottom:10px;">Für „${escapeHtml(username)}" — bitte sicher weitergeben. Wird nirgends gespeichert und kann danach nicht erneut angezeigt werden.</div>
+            <div class="recovery-code-box">${escapeHtml(tempPassword)}</div>
+          `);
           showToast("Passwort wurde zurückgesetzt");
         } catch (e) {
           adminPasswordCache = null; // falsches Passwort -> nicht weiter cachen
@@ -730,7 +750,7 @@ function paintAdmin(players) {
       }
 
       if (action === "delete") {
-        if (!confirm(`Konto „${username}" wirklich unwiderruflich löschen?`)) return;
+        if (!(await confirmModal(`Konto „${username}" wirklich unwiderruflich löschen?`, { title: "Konto löschen", okLabel: "Löschen", danger: true }))) return;
         btn.disabled = true;
         try {
           const adminPw = await askAdminPassword();

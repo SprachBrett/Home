@@ -2,7 +2,7 @@
 // badges.js — Abzeichen-Definitionen und Vergabe-Logik
 // ============================================================
 
-import { getFlatLessons, LANGUAGES } from "./data.js?v=1787296657";
+import { getFlatLessons, LANGUAGES } from "./data.js?v=1787297405";
 
 export const BADGES = [
   {

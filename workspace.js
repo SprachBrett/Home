@@ -5,17 +5,17 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787296657";
-import { saveUser, loadUser } from "./storage.js?v=1787296657";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787296657";
-import { evaluateBadges, BADGES } from "./badges.js?v=1787296657";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787296657";
-import { getRangliste, getLeague } from "./rangliste.js?v=1787296657";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787296657";
-import { showToast } from "./toast.js?v=1787296657";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1787296657";
-import { openModal, showInfoModal, confirmModal } from "./modal.js?v=1787296657";
-import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787296657";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787297405";
+import { saveUser, loadUser } from "./storage.js?v=1787297405";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787297405";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787297405";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787297405";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787297405";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787297405";
+import { showToast } from "./toast.js?v=1787297405";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787297405";
+import { openModal, showInfoModal, confirmModal } from "./modal.js?v=1787297405";
+import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787297405";
 
 let user = null;
 let currentView = "dashboard";
@@ -635,10 +635,6 @@ async function askAdminPassword() {
   if (!pw) throw new Error("Abgebrochen.");
   adminPasswordCache = pw;
   return pw;
-}
-
-function showInfoModal(title, bodyHtml) {
-  return openModal({ title, bodyHtml, buttons: [{ id: "ok", label: "OK", primary: true }] });
 }
 
 async function renderAdmin() {

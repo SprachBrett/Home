@@ -438,6 +438,23 @@ button, input {
 }
 .listen-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+.intro-card {
+  text-align: center;
+  padding: 32px 20px 8px;
+}
+.intro-target {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.intro-de {
+  font-size: 16px;
+  color: var(--text-dim);
+  margin-bottom: 22px;
+}
+
 .option-grid { display: grid; gap: 10px; margin-top: 4px; }
 
 .option-btn {

@@ -5,17 +5,17 @@
 // (Profil & Einstellungen leben in profile.js)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787297405";
-import { saveUser, loadUser } from "./storage.js?v=1787297405";
-import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787297405";
-import { evaluateBadges, BADGES } from "./badges.js?v=1787297405";
-import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787297405";
-import { getRangliste, getLeague } from "./rangliste.js?v=1787297405";
-import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787297405";
-import { showToast } from "./toast.js?v=1787297405";
-import { renderProfil, renderEinstellungen } from "./profile.js?v=1787297405";
-import { openModal, showInfoModal, confirmModal } from "./modal.js?v=1787297405";
-import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787297405";
+import { LANGUAGES, getFlatLessons, findLesson } from "./data.js?v=1787388034";
+import { saveUser, loadUser } from "./storage.js?v=1787388034";
+import { registerActivity, dailyGoalProgress, levelFromXp } from "./streak.js?v=1787388034";
+import { evaluateBadges, BADGES } from "./badges.js?v=1787388034";
+import { buildExercises, speak, checkAnswer, computeLessonReward } from "./lessons.js?v=1787388034";
+import { getRangliste, getLeague } from "./rangliste.js?v=1787388034";
+import { isOnlineAvailable, syncScoreOnline, subscribeLeaderboardOnline, ONLINE_LEADERBOARD_ENABLED } from "./online-rangliste.js?v=1787388034";
+import { showToast } from "./toast.js?v=1787388034";
+import { renderProfil, renderEinstellungen } from "./profile.js?v=1787388034";
+import { openModal, showInfoModal, confirmModal } from "./modal.js?v=1787388034";
+import { listPlayers, adminSetBanned, adminResetPassword, adminDeleteAccount } from "./auth.js?v=1787388034";
 
 let user = null;
 let currentView = "dashboard";
@@ -296,7 +296,7 @@ function renderWiederholen() {
 }
 
 function startReviewSession(lessons) {
-  const exercises = lessons.flatMap((l) => buildExercises(l, user.currentLanguage));
+  const exercises = lessons.flatMap((l) => buildExercises(l, user.currentLanguage, { includeIntro: false }));
   beginSession({ id: "review", title: "Wiederholung" }, exercises, true);
 }
 
@@ -346,7 +346,7 @@ function renderExercise() {
         <div class="feedback-banner" id="feedback"></div>
         <div class="exercise-footer">
           <div></div>
-          <button class="btn btn-primary" id="btn-check" disabled>Prüfen</button>
+          <button class="btn btn-primary" id="btn-check" ${ex.type === "intro" ? "" : "disabled"}>${ex.type === "intro" ? "Weiter →" : "Prüfen"}</button>
         </div>
       </div>
     </div>
@@ -357,6 +357,15 @@ function renderExercise() {
 }
 
 function renderExerciseBody(ex) {
+  if (ex.type === "intro") {
+    return `
+      <div class="intro-card">
+        <div class="intro-target">${escapeHtml(ex.target)}</div>
+        <div class="intro-de">${escapeHtml(ex.de)}</div>
+        <button class="listen-btn" id="btn-speak">🔊 Anhören</button>
+      </div>
+    `;
+  }
   if (ex.type === "listen") {
     return `
       <button class="listen-btn" id="btn-speak">🔊 Anhören</button>
@@ -385,6 +394,14 @@ function escapeHtml(str) {
 function wireExerciseInputs(ex) {
   const checkBtn = document.getElementById("btn-check");
   let selected = null;
+
+  if (ex.type === "intro") {
+    const doSpeak = () => speak(ex.target, user.currentLanguage, user.settings.volume);
+    document.getElementById("btn-speak").addEventListener("click", doSpeak);
+    setTimeout(doSpeak, 250);
+    checkBtn.addEventListener("click", () => { session.index += 1; renderExercise(); });
+    return;
+  }
 
   if (ex.type === "listen") {
     const speakBtn = document.getElementById("btn-speak");

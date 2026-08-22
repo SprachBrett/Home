@@ -4,14 +4,14 @@
 // im Zeichenprogramm-Vorbild)
 // ============================================================
 
-import { LANGUAGES, getFlatLessons } from "./data.js?v=1787297405";
-import { exportUser, importUserFromFile, saveUser } from "./storage.js?v=1787297405";
-import { levelFromXp } from "./streak.js?v=1787297405";
-import { BADGES } from "./badges.js?v=1787297405";
-import { showToast } from "./toast.js?v=1787297405";
-import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787297405";
-import { wirePasswordToggles } from "./auth-ui.js?v=1787297405";
-import { confirmModal } from "./modal.js?v=1787297405";
+import { LANGUAGES, getFlatLessons } from "./data.js?v=1787388034";
+import { exportUser, importUserFromFile, saveUser } from "./storage.js?v=1787388034";
+import { levelFromXp } from "./streak.js?v=1787388034";
+import { BADGES } from "./badges.js?v=1787388034";
+import { showToast } from "./toast.js?v=1787388034";
+import { clearSession, changeOwnPassword, deleteOwnAccount, regenerateRecoveryCode } from "./auth.js?v=1787388034";
+import { wirePasswordToggles } from "./auth-ui.js?v=1787388034";
+import { confirmModal } from "./modal.js?v=1787388034";
 
 export function renderProfil(root, user, persist) {
   const { level, xpIntoLevel, xpForNextLevel } = levelFromXp(user.xp);

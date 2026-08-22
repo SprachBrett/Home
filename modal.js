@@ -3,7 +3,7 @@
 // Ersetzt hässliche native confirm()/alert()/prompt()-Fenster.
 // ============================================================
 
-import { wirePasswordToggles } from "./auth-ui.js?v=1787297405";
+import { wirePasswordToggles } from "./auth-ui.js?v=1787388034";
 
 function escapeHtml(str) {
   const div = document.createElement("div");

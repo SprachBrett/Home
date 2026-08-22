@@ -21,8 +21,8 @@
 // Hobby-Rangliste.
 // ============================================================
 
-import { isConfigured } from "./auth.js?v=1787297405";
-import { getSyncableProgress } from "./storage.js?v=1787297405";
+import { isConfigured } from "./auth.js?v=1787388034";
+import { getSyncableProgress } from "./storage.js?v=1787388034";
 
 const SUPABASE_URL = 'https://vxxgzstcyfbtalgyspia.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_IQG5cqOPBc8kslXPXpqNIA_HnurwsNe';

@@ -6,7 +6,7 @@
 // (Wort eintippen), listen (Hören & erkennen via Sprachausgabe).
 // ============================================================
 
-import { LANGUAGES, SPEECH_LOCALE } from "./data.js?v=1787297405";
+import { LANGUAGES, SPEECH_LOCALE } from "./data.js?v=1787388034";
 
 function shuffle(arr) {
   const a = [...arr];
@@ -22,15 +22,25 @@ function pickDistractors(vocab, correctIndex, count) {
   return shuffle(pool).slice(0, count);
 }
 
-// Baut eine gemischte Übungsliste für eine Lektion.
-export function buildExercises(lesson, langId) {
+// Baut eine gemischte Übungsliste für eine Lektion. Neue Vokabeln
+// werden zuerst als Karteikarte gezeigt (Wort + Übersetzung +
+// Aussprache), bevor sie abgefragt werden — analog zu Duolingo &
+// Co., statt direkt unbekannte Wörter abzufragen.
+export function buildExercises(lesson, langId, { includeIntro = true } = {}) {
   const vocab = lesson.vocab;
   const exercises = [];
 
+  if (includeIntro) {
+    vocab.forEach(([de, target]) => {
+      exercises.push({ type: "intro", prompt: "Neues Wort", de, target });
+    });
+  }
+
+  const quiz = [];
   vocab.forEach(([de, target], idx) => {
     // 1) Multiple Choice: Zielsprache -> Deutsch
     const distractorsA = pickDistractors(vocab, idx, 3);
-    exercises.push({
+    quiz.push({
       type: "choice",
       prompt: `Was bedeutet „${target}“?`,
       audioText: null,
@@ -39,7 +49,7 @@ export function buildExercises(lesson, langId) {
     });
 
     // 2) Tippen: Deutsch -> Zielsprache
-    exercises.push({
+    quiz.push({
       type: "translate",
       prompt: `Übersetze: „${de}“`,
       correct: target,
@@ -48,7 +58,7 @@ export function buildExercises(lesson, langId) {
 
     // 3) Hören: Zielsprache vorlesen -> Deutsch erkennen
     const distractorsB = pickDistractors(vocab, idx, 3);
-    exercises.push({
+    quiz.push({
       type: "listen",
       prompt: "Was hast du gehört?",
       audioText: target,
@@ -57,7 +67,7 @@ export function buildExercises(lesson, langId) {
     });
   });
 
-  return shuffle(exercises);
+  return [...exercises, ...shuffle(quiz)];
 }
 
 // Spricht Text in der Zielsprache über die Web Speech API.

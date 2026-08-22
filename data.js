@@ -81,6 +81,36 @@ export const LANGUAGES = {
             ["Taxi", "taxi"], ["Bus", "bus"]
           ]}
         ]
+      },
+      {
+        id: "en-u5",
+        title: "Alltag",
+        icon: "🏠",
+        lessons: [
+          { id: "en-u5-l1", title: "Zuhause", vocab: [
+            ["Haus", "house"], ["Zimmer", "room"], ["Küche", "kitchen"], ["Bad", "bathroom"], ["Fenster", "window"],
+            ["Tür", "door"], ["Bett", "bed"], ["Stuhl", "chair"], ["Tisch", "table"], ["Schlüssel", "key"]
+          ]},
+          { id: "en-u5-l2", title: "Tagesablauf", vocab: [
+            ["aufwachen", "wake up"], ["arbeiten", "work"], ["schlafen", "sleep"], ["essen", "eat"], ["trinken", "drink"],
+            ["lesen", "read"], ["schreiben", "write"], ["laufen", "walk"], ["spielen", "play"], ["kochen", "cook"]
+          ]}
+        ]
+      },
+      {
+        id: "en-u6",
+        title: "Zeit & Wetter",
+        icon: "☀️",
+        lessons: [
+          { id: "en-u6-l1", title: "Zeit", vocab: [
+            ["heute", "today"], ["morgen", "tomorrow"], ["gestern", "yesterday"], ["Woche", "week"], ["Monat", "month"],
+            ["Jahr", "year"], ["Stunde", "hour"], ["Minute", "minute"], ["jetzt", "now"], ["später", "later"]
+          ]},
+          { id: "en-u6-l2", title: "Wetter", vocab: [
+            ["Sonne", "sun"], ["Regen", "rain"], ["Schnee", "snow"], ["Wind", "wind"], ["warm", "warm"],
+            ["kalt", "cold"], ["Wolke", "cloud"], ["Himmel", "sky"], ["Sommer", "summer"], ["Winter", "winter"]
+          ]}
+        ]
       }
     ]
   },
@@ -161,6 +191,36 @@ export const LANGUAGES = {
             ["Taxi", "taxi"], ["Bus", "bus"]
           ]}
         ]
+      },
+      {
+        id: "fr-u5",
+        title: "Alltag",
+        icon: "🏠",
+        lessons: [
+          { id: "fr-u5-l1", title: "Zuhause", vocab: [
+            ["Haus", "maison"], ["Zimmer", "chambre"], ["Küche", "cuisine"], ["Bad", "salle de bain"], ["Fenster", "fenêtre"],
+            ["Tür", "porte"], ["Bett", "lit"], ["Stuhl", "chaise"], ["Tisch", "table"], ["Schlüssel", "clé"]
+          ]},
+          { id: "fr-u5-l2", title: "Tagesablauf", vocab: [
+            ["aufwachen", "se réveiller"], ["arbeiten", "travailler"], ["schlafen", "dormir"], ["essen", "manger"], ["trinken", "boire"],
+            ["lesen", "lire"], ["schreiben", "écrire"], ["laufen", "marcher"], ["spielen", "jouer"], ["kochen", "cuisiner"]
+          ]}
+        ]
+      },
+      {
+        id: "fr-u6",
+        title: "Zeit & Wetter",
+        icon: "☀️",
+        lessons: [
+          { id: "fr-u6-l1", title: "Zeit", vocab: [
+            ["heute", "aujourd'hui"], ["morgen", "demain"], ["gestern", "hier"], ["Woche", "semaine"], ["Monat", "mois"],
+            ["Jahr", "année"], ["Stunde", "heure"], ["Minute", "minute"], ["jetzt", "maintenant"], ["später", "plus tard"]
+          ]},
+          { id: "fr-u6-l2", title: "Wetter", vocab: [
+            ["Sonne", "soleil"], ["Regen", "pluie"], ["Schnee", "neige"], ["Wind", "vent"], ["warm", "chaud"],
+            ["kalt", "froid"], ["Wolke", "nuage"], ["Himmel", "ciel"], ["Sommer", "été"], ["Winter", "hiver"]
+          ]}
+        ]
       }
     ]
   },
@@ -239,6 +299,36 @@ export const LANGUAGES = {
             ["links", "izquierda"], ["rechts", "derecha"], ["geradeaus", "todo recto"], ["Ausgang", "salida"],
             ["Eingang", "entrada"], ["Verspätung", "retraso"], ["Abflug", "salida"], ["Ankunft", "llegada"],
             ["Taxi", "taxi"], ["Bus", "autobús"]
+          ]}
+        ]
+      },
+      {
+        id: "es-u5",
+        title: "Alltag",
+        icon: "🏠",
+        lessons: [
+          { id: "es-u5-l1", title: "Zuhause", vocab: [
+            ["Haus", "casa"], ["Zimmer", "habitación"], ["Küche", "cocina"], ["Bad", "baño"], ["Fenster", "ventana"],
+            ["Tür", "puerta"], ["Bett", "cama"], ["Stuhl", "silla"], ["Tisch", "mesa"], ["Schlüssel", "llave"]
+          ]},
+          { id: "es-u5-l2", title: "Tagesablauf", vocab: [
+            ["aufwachen", "despertar"], ["arbeiten", "trabajar"], ["schlafen", "dormir"], ["essen", "comer"], ["trinken", "beber"],
+            ["lesen", "leer"], ["schreiben", "escribir"], ["laufen", "caminar"], ["spielen", "jugar"], ["kochen", "cocinar"]
+          ]}
+        ]
+      },
+      {
+        id: "es-u6",
+        title: "Zeit & Wetter",
+        icon: "☀️",
+        lessons: [
+          { id: "es-u6-l1", title: "Zeit", vocab: [
+            ["heute", "hoy"], ["morgen", "mañana"], ["gestern", "ayer"], ["Woche", "semana"], ["Monat", "mes"],
+            ["Jahr", "año"], ["Stunde", "hora"], ["Minute", "minuto"], ["jetzt", "ahora"], ["später", "más tarde"]
+          ]},
+          { id: "es-u6-l2", title: "Wetter", vocab: [
+            ["Sonne", "sol"], ["Regen", "lluvia"], ["Schnee", "nieve"], ["Wind", "viento"], ["warm", "cálido"],
+            ["kalt", "frío"], ["Wolke", "nube"], ["Himmel", "cielo"], ["Sommer", "verano"], ["Winter", "invierno"]
           ]}
         ]
       }
